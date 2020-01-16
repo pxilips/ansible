@@ -1,0 +1,33 @@
+[pxilips@ansible ansible]$ cat host.txt 
+[Frontend:vars]
+ansible_user=pxilips
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q pxilips@192.168.0.162"'
+
+
+[Frontend]
+frontend1 ansible_host=192.168.56.103
+
+[Backend:vars]
+ansible_user=pxilips
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q pxilips@192.168.0.162"'
+
+[Backend]
+backend1 ansible_host=192.168.56.101
+----------------------------------------------------
+[pxilips@ansible ansible]$ ansible -i host.txt all -m ping
+frontend1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    }, 
+    "changed": false, 
+    "ping": "pong"
+}
+backend1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    }, 
+    "changed": false, 
+    "ping": "pong"
+}
