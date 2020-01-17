@@ -1,0 +1,64 @@
+root@nb-pxilips:/home/ansible/group_vars# cat all
+---
+ansible_user : centos
+-----------------------------------------------------
+root@nb-pxilips:/home/ansible/group_vars# cat us-east-2
+---
+ansible_private_key_file : ~/.ssh/centos_aws_ssh.pem
+-----------------------------------------------------
+root@nb-pxilips:/home/ansible# ansible -i ./ec2.py all -m ping
+[DEPRECATION WARNING]: The TRANSFORM_INVALID_GROUP_CHARS settings is set to allow bad characters in group names by
+default, this will change, but still be user configurable on deprecation. This feature will be removed in version
+2.10. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+
+3.133.129.147 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+------------------------------------------------------
+root@nb-pxilips:/home/ansible# cat playbook1.yml
+---
+- name: Install Vim
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Install Vim
+    yum:  name=vim state=latest
+------------------------------------------------------
+root@nb-pxilips:/home/ansible# ansible-playbook -i ec2.py playbook1.yaml
+[DEPRECATION WARNING]: The TRANSFORM_INVALID_GROUP_CHARS settings is set to allow bad characters in group names by
+default, this will change, but still be user configurable on deprecation. This feature will be removed in version
+2.10. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+
+
+PLAY [Install Vim] **************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************
+ok: [3.133.129.147]
+
+TASK [vim install] **************************************************************************************************
+changed: [3.133.129.147]
+
+PLAY RECAP **********************************************************************************************************
+3.133.129.147              : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+--------------------------------------------------------
+
+VIM - Vi IMproved
+~
+~                                           version 7.4.629
+~                                      by Bram Moolenaar et al.
+~                                  Modified by <bugzilla@redhat.com>
+~                             Vim is open source and freely distributable
+~
+~                                      Sponsor Vim development!
+~                           type  :help sponsor<Enter>    for information
+~
+~                           type  :q<Enter>               to exit
+~                           type  :help<Enter>  or  <F1>  for on-line help
+~                           type  :help version7<Enter>   for version info
