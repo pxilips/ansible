@@ -1,0 +1,48 @@
+---
+# tasks file for deploy_nginx
+- name: Install epel
+  yum: name=epel-release state=present
+
+- name: Install nginx
+  yum: name=nginx state=present
+
+- name: Install certbot
+  yum: name=certbot state=latest
+
+- name: Create directory for virtualhost
+  file: dest=/usr/share/nginx/html/{{ item }} state=directory
+  loop: "{{ www_sites }}"
+
+- name: Copy nginx config
+  template: src=default.conf dest=/etc/nginx/nginx.conf
+
+- name: copy letsenc_vhost.conf
+  template: src=letsenc_vhost.conf dest=/etc/nginx/conf.d/{{ item }}.conf
+  loop: "{{ www_sites }}"
+  notify: Restart nginx
+
+- name: nginx reload
+  service:
+   name: nginx
+   state: reloaded
+
+- name: Create letsencrypt certificate
+  shell: letsencrypt certonly -n --webroot -w /usr/share/nginx/html/{{ item }} -m {{ letsencrypt_email }} --agree-tos -d {{ item }}
+  args:
+    creates: /etc/letsencrypt/live/{{ item }}
+  loop: "{{ www_sites }}"
+  notify: Restart nginx
+
+- name: copy vhosts.conf
+  template: src=vhosts.conf dest=/etc/nginx/conf.d/{{ item }}.conf
+  loop: "{{ www_sites }}"
+
+- name: Copy index.html
+  template: src=index.html dest=/usr/share/nginx/html/{{ item }}/index.html
+  loop: "{{ www_sites }}"
+  notify: Restart nginx
+
+- name: nginx reload
+  service:
+   name: nginx
+   state: reloaded
