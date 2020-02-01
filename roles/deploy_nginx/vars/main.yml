@@ -1,0 +1,8 @@
+---
+# vars file for deploy_nginx
+www_sites:
+  - smartllp.eu
+  - ittllp.uk
+
+letsencrypt_email:
+  - pxilips@smartllp.eu
