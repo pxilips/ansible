@@ -1,0 +1,21 @@
+---
+ - hosts: all
+   become: true
+   gather_facts: false
+
+   tasks:
+     - uri:
+         url: http://127.0.0.1
+       ignore_errors: yes
+       register: response
+     - debug:
+        var: ec2_id
+       when: response.status == -1
+     - local_action:
+         module: ec2_instance
+         instance_ids:
+           - "{{ ec2_id }}"
+         state: terminated
+         region: us-east-2
+       when: response.status == -1
+       become: false
