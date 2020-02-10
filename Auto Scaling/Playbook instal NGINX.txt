@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: yes
+  vars:
+    remote_user: ubuntu
+
+  tasks:
+   - name: Install Nginx
+     apt:
+      update_cache: yes
+      name: nginx
+      state: present
+
+   - name: Start Nginx
+     service:
+      name: nginx
+      state: started
